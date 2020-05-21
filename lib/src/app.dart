@@ -18,14 +18,6 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('Let\'s see some Images'),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              i++;
-            });
-          },
-          child: Icon(Icons.add_a_photo),
-        ),
       ),
     );
   }
