@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:math';
-import 'package:pinch_zoom_image_updated/pinch_zoom_image_updated.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'loadingscreen.dart';
+
+// import 'package:flutter_advanced_networkimage/provider.dart';
+// import 'package:flutter_advanced_networkimage/transition.dart';
+import 'package:flutter_advanced_networkimage/zoomable.dart';
+// import 'package:show_pics_list/src/loadingScreen.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -46,15 +48,34 @@ class _MyAppState extends State<MyApp> {
           padding: EdgeInsets.only(bottom: 10.0),
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('$day/$month/$year'),
-                Text('$imgName'),
-                Card(
-                  child: PinchZoomImage(
-                    hideStatusBarWhileZooming: true,
-                    image: Image.network(
-                      '$imgURL',
+                Expanded(
+                  child: Text('$day/$month/$year'),
+                ),
+                Expanded(
+                  child: Text('$imgName'),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Container(
+                    width: double.infinity,
+                    child: ZoomableWidget(
+                      maxScale: 100,
+                      child: Image.network(
+                        imgURL,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -72,7 +93,6 @@ class _MyAppState extends State<MyApp> {
               month = Random().nextInt(11) + 1;
               year = Random().nextInt(24) + 1996;
               getData();
-              print(imgURL);
             });
           },
           child: Icon(Icons.navigate_next),
@@ -81,3 +101,34 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+// CachedNetworkImage(
+//                     imageUrl: imgURL,
+//                     progressIndicatorBuilder:
+//                         (context, url, downloadProgress) =>
+//                             CircularProgressIndicator(
+//                                 value: downloadProgress.progress),
+//                     errorWidget: (context, url, error) => Icon(Icons.error),
+//                   ),
+
+// TransitionToImage(
+//                         image: AdvancedNetworkImage(
+//                           imgURL,
+//                         ),
+//                         width: double.infinity,
+//                         loadingWidget: Loading(),
+//                         loadingWidgetBuilder: (
+//                           BuildContext context,
+//                           double progress,
+//                           imageData,
+//                         ) {
+//                           // print(imageData.lengthInBytes);
+//                           return Container(
+//                             width: 300.0,
+//                             height: 300.0,
+//                             alignment: Alignment.center,
+//                             child: CircularProgressIndicator(
+//                               value: progress == 0.0 ? null : progress,
+//                             ),
+//                           );
+//                         }),
